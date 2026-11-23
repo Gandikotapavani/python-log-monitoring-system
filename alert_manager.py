@@ -2,6 +2,9 @@ from log_parser import parse_log_file
 from database import initialize_database, save_logs, save_alerts
 
 
+ERROR_THRESHOLD = 3
+
+
 def generate_alerts(file_path):
     logs = parse_log_file(file_path)
 
@@ -23,6 +26,11 @@ def generate_alerts(file_path):
 
         if "failed login" in message.lower():
             alerts.append(f"SECURITY ALERT: {message}")
+
+    if error_count >= ERROR_THRESHOLD:
+        alerts.append(
+            f"THRESHOLD ALERT: Error count reached {error_count}"
+        )
 
     initialize_database()
     save_logs(logs)
